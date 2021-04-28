@@ -1,0 +1,113 @@
+﻿@page "/folders"
+@using WebApplication1.Shared
+@using Xero.NetStandard.OAuth2.Model.Files
+@using System.Text.Json
+@using System.Text
+@using System.IO
+@using System.Linq
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Web
+@using System.ComponentModel.DataAnnotations;
+
+@inject ILogger<Files> logger
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+<h3>Folders</h3>
+
+
+@if (folders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Files Count</th>
+                <th>Delete</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var folder in folders)
+            {
+                <tr>
+                    <td>@folder.Name</td>
+                    <td>@folder.FileCount</td>
+                    @if (folder.FileCount == 0)
+                    {
+                        <td><button @onclick="() => Delete(folder)">Delete</button></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2> Create Folder </h2>
+    <p>
+        Enter a folder name and click submit to create a new Folder.
+    </p>
+
+    <EditForm Model="@exampleFolder" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText id="name" @bind-Value="exampleFolder.Name" />
+
+        <button type="submit">Submit</button>
+    </EditForm>
+
+
+    <h2> Delete Folder </h2>
+    <p>
+        Click the Delete button in the Delete column to delete a folder. If you can't see a button, it's probably because the folder has files in it.
+        A folder can only be deleted if it is empty.
+    </p>
+}
+
+@code {
+    private FolderValidation exampleFolder = new FolderValidation();
+    public class FolderValidation
+    {
+        [Required]
+        public string Name { get; set; }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        XeroFolder createFolder = new XeroFolder
+        {
+            Name = exampleFolder.Name
+        };
+        await Http.PostAsJsonAsync<XeroFolder>("createfolder", createFolder);
+        await OnInitializedAsync();
+    }
+
+
+    private Guid folderId;
+    private class File
+    {
+        public string Name { get; set; }
+    }
+
+    private List<Folder> folders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        folders = await Http.GetFromJsonAsync<List<Folder>>("getfolders");
+    }
+
+    async Task Delete(Folder folder)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", String.Format("Are you sure you want to delete the '{0}' folder?\nFolder Id= {1}\nTo delete a folder, it must be empty!", folder.Name, folder.Id));
+        if (confirmed)
+        {
+            Console.WriteLine("Deleting" + folder.Id);
+            await Http.PostAsJsonAsync<Folder>("deletefolder", folder);
+            folders = folders.Where(x => x.Id != folder.Id).ToList();
+        }
+    }
+}

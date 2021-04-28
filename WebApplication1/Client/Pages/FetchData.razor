@@ -2,8 +2,12 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using WebApplication1.Shared
+@using System.Net.Http.Headers
+
 @attribute [Authorize]
 @inject HttpClient Http
+@inject IAccessTokenProvider TokenProvider
+@inject NavigationManager Navigator
 
 <h1>Weather forecast</h1>
 
@@ -40,12 +44,27 @@ else
 
 @code {
     private WeatherForecast[] forecasts;
+    private string responseBody;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+            var accessTokenResult = await TokenProvider.RequestAccessToken();
+            var AccessToken = string.Empty;
+            if (accessTokenResult.TryGetToken(out var token))
+            {
+                AccessToken = token.Value;
+            }
+            var requestMessage = new HttpRequestMessage()
+            {
+                Method = new HttpMethod("GET"),
+                RequestUri = new Uri(Navigator.BaseUri + "/WeatherForecast")
+            };
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+            var response = await Http.SendAsync(requestMessage);
+            responseBody = await response.Content.ReadAsStringAsync();
+            forecasts = System.Text.Json.JsonSerializer.Deserialize<WeatherForecast[]>(responseBody);
         }
         catch (AccessTokenNotAvailableException exception)
         {

@@ -1,58 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using System.Text.Json
-@using System.Net.Http.Headers;
-@using System.Security.Claims
-@using WebApplication1.Shared;
-@inject AuthenticationStateProvider AuthenticationStateProvider
-
-
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
-@inject IJSRuntime JSRuntime
-@inject HttpClient Http
-
 
 <AuthorizeView>
     <Authorized>
-        @if (!String.IsNullOrEmpty(OrgName))
-        {
-            <a>@OrgName</a>
-        }
-        @*<a>Hello, @given_name! Organisation: @orgName</a>*@
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <button class="nav-link btn btn-link" @onclick="BeginSignOut"><img src="disconnect-blue.svg"></button>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        <a href="authentication/login"><img src="connect-blue.svg"></a>
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
-
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    private string _authMessage;
-    private string OrgName { get; set; }
-
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        var authState = await authenticationStateTask;
-        var user = authState.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            var connection = await Http.GetFromJsonAsync<Connection>("getconnection");
-            OrgName = connection.tenantName;
-            Console.WriteLine(OrgName);
-        }
-    }
-
 }

@@ -28,6 +28,7 @@ else
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Id</th>
                 <th>MimeType</th>
                 <th>Size</th>
                 <th>Delete</th>
@@ -37,12 +38,13 @@ else
         <tbody>
             @foreach (var file in filesItems)
             {
-                <tr>
-                    <td>@file.Name</td>
-                    <td>@file.MimeType</td>
-                    <td>@file.Size</td>
-                    <td><button @onclick="() => Delete(file)">Delete</button></td>
-                </tr>
+            <tr>
+                <td>@file.Name</td>
+                <td>@file.Id</td>
+                <td>@file.MimeType</td>
+                <td>@file.Size</td>
+                <td><button @onclick="() => Delete(file)">Delete</button></td>
+            </tr>
             }
         </tbody>
     </table>
@@ -96,9 +98,8 @@ else
             FolderId = folderId ?? null
         };
 
-        await Http.PostAsJsonAsync<XeroUpload>("/api/pkce/uploadfile", file);
-        await OnInitializedAsync();
-
+        await Http.PostAsJsonAsync<XeroUpload>("uploadfile", file);
+        filesItems = await Http.GetFromJsonAsync<List<FileObject>>("getfiles");
     }
 
     async Task Delete(FileObject file)
@@ -106,9 +107,9 @@ else
         bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", String.Format("Are you sure you want to delete the '{0}' file?\nFile Id= {1}\n", file.Name, file.Id));
         if (confirmed)
         {
+            filesItems = filesItems.Where(x => x.Id != file.Id).ToList();
             Console.WriteLine("Deleting" + file.Id);
-            await Http.PostAsJsonAsync<FileObject>("/api/pkce/deletefile", file);
-            await OnInitializedAsync();
+            await Http.PostAsJsonAsync<FileObject>("deletefile", file);
         }
     }
 
@@ -130,7 +131,7 @@ else
             exception.Redirect();
         }
 
-        //folders = await Http.GetFromJsonAsync<List<Folder>>("api/pkce/getfolders");
-        //image = await Http.GetFromJsonAsync<byte[]>(string.Format("api/xero/getfile/?id={0}", filesItems.FirstOrDefault().Id));
+        folders = await Http.GetFromJsonAsync<List<Folder>>("getfolders");
+        image = await Http.GetFromJsonAsync<byte[]>(string.Format("getfile/?id={0}", filesItems.FirstOrDefault().Id));
     }
 }

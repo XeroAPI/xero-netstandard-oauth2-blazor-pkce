@@ -37,6 +37,7 @@ namespace WebApplication1.Client
                 options.ProviderOptions.DefaultScopes.Add("accounting.contacts");
                 options.ProviderOptions.DefaultScopes.Add("accounting.settings");
                 options.ProviderOptions.ResponseType = "code";
+                options.ProviderOptions.PostLogoutRedirectUri = "https://localhost:44356";
             });
 
             await builder.Build().RunAsync();
