@@ -10,7 +10,7 @@ using WebApplication1.Shared;
 
 namespace WebApplication1.Server.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
