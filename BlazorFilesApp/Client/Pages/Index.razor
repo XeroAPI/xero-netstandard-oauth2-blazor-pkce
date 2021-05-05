@@ -1,7 +1,15 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<h1>Hello Xero Developer!</h1>
+<AuthorizeView>
+    <Authorized>
+       Click the tabs on the left to check out the Files API functionality.
+    </Authorized>
+    <NotAuthorized>
+        Welcome. <br />Login using the connect to Xero button to check out the functionality.
+        There will be functions for getting and uploading files, creating and deleting folders, and creating and deleting associations.
+    </NotAuthorized>
+</AuthorizeView>
+<p>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+</p>
