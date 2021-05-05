@@ -8,6 +8,8 @@ This project is a Blazor WebAssembly Demo Application demonstrating the use of t
 - Create Folder, Delete Folder
 - Create Association, Get Associations for a File
 
+![](demonstration.gif)
+
 ## Running the Application
 ### Create a Xero app for OAuth 2.0
 You will need to create a Xero App on the developer portal to run the application.
