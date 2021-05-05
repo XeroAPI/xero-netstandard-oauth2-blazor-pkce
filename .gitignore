@@ -259,10 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-WebApplication5/Server/appsettings.json
-WebApplication5/Server/appsettings.Development.json
-WebApplication5/Server/xerotoken.json
 
-WebApplication1/Client/wwwroot/appsettings.json
 
-WebApplication1/Server/appsettings.json
