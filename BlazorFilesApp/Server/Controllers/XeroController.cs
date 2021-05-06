@@ -30,7 +30,6 @@ namespace BlazorFilesApp.Server.Controllers
             var tenantId = await GetTenantId(accessToken);
             var response = await FilesApi.GetFilesAsync(accessToken, tenantId);
             var filesItems = response.Items;
-            Console.WriteLine("hello");
             return Ok(filesItems);
         }
 

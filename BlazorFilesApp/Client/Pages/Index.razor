@@ -4,12 +4,18 @@
 <AuthorizeView>
     <Authorized>
        Click the tabs on the left to check out the Files API functionality.
+	   <h2>
+			Claims
+	   </h2>
+	    <ul>
+            @foreach (var claim in context.User.Claims)
+            {
+                <li><b>@claim.Type</b>: @claim.Value</li>
+            }
+        </ul>
     </Authorized>
     <NotAuthorized>
         Welcome. <br />Login using the connect to Xero button to check out the functionality.
         There will be functions for getting and uploading files, creating and deleting folders, and creating and deleting associations.
     </NotAuthorized>
 </AuthorizeView>
-<p>
-
-</p>

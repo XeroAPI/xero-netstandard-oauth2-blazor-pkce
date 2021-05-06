@@ -134,7 +134,6 @@ else
     }
 
     private Invoice invoice;
-    private FileObject file;
     private List<Invoice> invoices;
     private List<FileObject> files;
     public List<Association> associations;
@@ -189,13 +188,10 @@ else
         if (fileId == SelectedFileId) { associations.Add(association); }
     }
 
-    private Guid folderId;
     private class File
     {
         public string Name { get; set; }
     }
-
-    private List<Folder> folders;
 
     protected override async Task OnInitializedAsync()
     {
