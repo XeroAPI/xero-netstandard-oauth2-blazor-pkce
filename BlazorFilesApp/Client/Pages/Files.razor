@@ -13,8 +13,8 @@
 @inject ILogger<Files> logger
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
-<h3>Files</h3>
 
+<h3>Files</h3>
 
 @if (filesItems == null)
 {
@@ -22,6 +22,7 @@
 }
 else
 {
+    @* Uncomment this img tag and the call in OnInitializedAsync to display the first image from the API. *@
     @*<img src="data:image;base64,@System.Convert.ToBase64String(image)" width="200" height="200" />*@
 
     <table class="table">
@@ -76,7 +77,6 @@ else
     </label>
 </p>
 
-
 @code {
 
     private class File
@@ -113,7 +113,6 @@ else
         }
     }
 
-
     private List<FileObject> filesItems;
     private List<Folder> folders;
     private byte[] image;
@@ -132,6 +131,6 @@ else
         }
 
         folders = await Http.GetFromJsonAsync<List<Folder>>("getfolders");
-        image = await Http.GetFromJsonAsync<byte[]>(string.Format("getfile/?id={0}", filesItems.FirstOrDefault().Id));
+        //image = await Http.GetFromJsonAsync<byte[]>(string.Format("getfile/?id={0}", filesItems.FirstOrDefault().Id));
     }
 }
