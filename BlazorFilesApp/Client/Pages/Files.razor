@@ -78,12 +78,6 @@ else
 </p>
 
 @code {
-
-    private class File
-    {
-        public string Name { get; set; }
-    }
-
     private async Task SingleUpload(InputFileChangeEventArgs e)
     {
         MemoryStream ms = new MemoryStream();
@@ -117,19 +111,16 @@ else
     private List<Folder> folders;
     private byte[] image;
     private Guid? folderId;
-
     protected override async Task OnInitializedAsync()
     {
         try
         {
             filesItems = await Http.GetFromJsonAsync<List<FileObject>>("getfiles");
-
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
-
         folders = await Http.GetFromJsonAsync<List<Folder>>("getfolders");
         //image = await Http.GetFromJsonAsync<byte[]>(string.Format("getfile/?id={0}", filesItems.FirstOrDefault().Id));
     }
